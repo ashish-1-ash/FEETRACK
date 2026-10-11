@@ -7,8 +7,9 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
+RUN apk add --no-cache ca-certificates && update-ca-certificates
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 ENV PORT=8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djdk.tls.client.protocols=TLSv1.2,TLSv1.3", "-jar", "app.jar"]
