@@ -39,7 +39,11 @@ export default function StudentLogin() {
       const res = await loginStudent({ email: formData.email.trim().toLowerCase(), password: formData.password });
       const { token, ...userData } = res.data;
       login(token, userData);
-      navigate('/student/dashboard', { replace: true });
+      if (userData.role === 'ROLE_ADMIN' || userData.role === 'ROLE_ACCOUNTANT') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        navigate('/student/dashboard', { replace: true });
+      }
     } catch (err) {
       setApiError(getErrorMessage(err));
     } finally {
@@ -151,6 +155,12 @@ export default function StudentLogin() {
             Register here
           </Link>
         </p>
+
+        <div style={{ textAlign: 'center', marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--slate-100)' }}>
+          <Link to="/admin/login" style={{ fontSize: '0.825rem', color: 'var(--slate-500)', textDecoration: 'underline' }}>
+            Looking for Administrator Login? Click here
+          </Link>
+        </div>
       </div>
     </div>
   );

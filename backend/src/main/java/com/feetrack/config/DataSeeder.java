@@ -42,25 +42,39 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.count() > 0) {
-            System.out.println("[DataSeeder] Data already exists, skipping seeding.");
-            return;
+        // Ensure Default Admin User exists
+        if (!userRepository.existsByEmailIgnoreCase("admin@gmail.com")) {
+            User adminGmail = new User();
+            adminGmail.setName("System Administrator");
+            adminGmail.setEmail("admin@gmail.com");
+            adminGmail.setPassword(passwordEncoder.encode("admin123"));
+            adminGmail.setPhone("9000000001");
+            adminGmail.setRole(Role.ROLE_ADMIN);
+            adminGmail.setStatus("ACTIVE");
+            adminGmail.setCreatedAt(LocalDateTime.now());
+            adminGmail.setUpdatedAt(LocalDateTime.now());
+            userRepository.save(adminGmail);
+            System.out.println("[DataSeeder] Admin created: admin@gmail.com / admin123");
         }
 
-        System.out.println("[DataSeeder] Seeding initial data...");
+        if (!userRepository.existsByEmailIgnoreCase("admin@feetrack.com")) {
+            User adminUser = new User();
+            adminUser.setName("Admin User");
+            adminUser.setEmail("admin@feetrack.com");
+            adminUser.setPassword(passwordEncoder.encode("admin123"));
+            adminUser.setPhone("9000000002");
+            adminUser.setRole(Role.ROLE_ADMIN);
+            adminUser.setStatus("ACTIVE");
+            adminUser.setCreatedAt(LocalDateTime.now());
+            adminUser.setUpdatedAt(LocalDateTime.now());
+            userRepository.save(adminUser);
+            System.out.println("[DataSeeder] Admin user created: admin@feetrack.com / admin123");
+        }
 
-        // 1. Create Admin User
-        User adminUser = new User();
-        adminUser.setName("Admin User");
-        adminUser.setEmail("admin@feetrack.com");
-        adminUser.setPassword(passwordEncoder.encode("admin123"));
-        adminUser.setPhone("9000000001");
-        adminUser.setRole(Role.ROLE_ADMIN);
-        adminUser.setStatus("ACTIVE");
-        adminUser.setCreatedAt(LocalDateTime.now());
-        adminUser.setUpdatedAt(LocalDateTime.now());
-        userRepository.save(adminUser);
-        System.out.println("[DataSeeder] Admin user created: admin@feetrack.com / admin123");
+        if (userRepository.count() > 2) {
+            System.out.println("[DataSeeder] Student & fee data already exists, skipping further seeding.");
+            return;
+        }
 
         // 2. Create Demo Student User
         User studentUser = new User();
