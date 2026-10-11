@@ -1,7 +1,23 @@
 import axios from 'axios';
 
+// Ensure baseURL always ends with /api/v1
+const getBaseURL = () => {
+  let envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) {
+    return '/api/v1';
+  }
+  // Trim trailing slash
+  envUrl = envUrl.trim().replace(/\/+$/, '');
+  // If the user provided just the host e.g. https://feetrack-cqrw.onrender.com
+  // ensure /api/v1 is appended
+  if (!envUrl.endsWith('/api/v1')) {
+    envUrl = `${envUrl}/api/v1`;
+  }
+  return envUrl;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
+  baseURL: getBaseURL(),
   headers: { 'Content-Type': 'application/json' },
 });
 
